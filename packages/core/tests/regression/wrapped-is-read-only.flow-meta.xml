@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <label>Wrapped Read Only Regression</label>
+    <processType>Flow</processType>
+    <screens>
+        <name>Input_Screen</name>
+        <label>Input Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <fields>
+            <name>Account_Name</name>
+            <dataType>String</dataType>
+            <fieldText>Account Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isReadOnly>
+                <booleanValue>true</booleanValue>
+            </isReadOnly>
+        </fields>
+    </screens>
+    <status>Draft</status>
+</Flow>

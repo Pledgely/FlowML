@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <label>Raw Fault Connector Regression</label>
+    <orchestratedStages>
+        <name>Unknown_Step</name>
+            <label>Unknown Step</label>
+            <locationX>0</locationX>
+            <locationY>0</locationY>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Handle_Fault</targetReference>
+        </faultConnector>
+    </orchestratedStages>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+</Flow>

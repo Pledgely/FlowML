@@ -1,0 +1,16 @@
+flow:
+  name: Legacy_Input_Xml_Tags
+  label: Legacy Input XML Tags
+  processType: AutoLaunchedFlow
+  apiVersion: "65.0"
+  status: Draft
+  hasEnvironments: false
+  rawProcessMetadata: []
+steps:
+  - action: Invoke_Action
+    label: Invoke Action
+    actionType: apex:LegacyAction
+    inputs:
+      recordId: Bare_Record_Id
+    inputXmlTags:
+      recordId: elementReference

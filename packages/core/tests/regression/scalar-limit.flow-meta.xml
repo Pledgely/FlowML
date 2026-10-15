@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <dynamicChoiceSets>
+        <name>Limited_Accounts</name>
+        <dataType>String</dataType>
+        <displayField>Name</displayField>
+        <limit>10</limit>
+        <object>Account</object>
+        <valueField>Id</valueField>
+    </dynamicChoiceSets>
+    <label>Scalar Limit Regression</label>
+    <processType>Flow</processType>
+    <status>Draft</status>
+</Flow>

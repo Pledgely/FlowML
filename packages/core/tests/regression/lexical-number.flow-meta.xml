@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <choices>
+        <name>Five</name>
+        <choiceText>Five</choiceText>
+        <dataType>Number</dataType>
+        <value>
+            <numberValue>5.0</numberValue>
+        </value>
+    </choices>
+    <label>Lexical Number Regression</label>
+    <processType>Flow</processType>
+    <status>Draft</status>
+</Flow>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <label>Repeater Regression</label>
+    <processType>Flow</processType>
+    <screens>
+        <name>Input_Screen</name>
+        <label>Input Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <fields>
+            <name>People</name>
+            <fieldType>Repeater</fieldType>
+            <fields>
+                <name>First_Name</name>
+                <dataType>String</dataType>
+                <fieldText>First Name</fieldText>
+                <fieldType>InputField</fieldType>
+                <isRequired>true</isRequired>
+            </fields>
+            <fields>
+                <name>Last_Name</name>
+                <dataType>String</dataType>
+                <fieldText>Last Name</fieldText>
+                <fieldType>InputField</fieldType>
+                <isRequired>true</isRequired>
+            </fields>
+        </fields>
+    </screens>
+    <status>Draft</status>
+</Flow>

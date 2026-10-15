@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Invoke_Action</name>
+        <label>Invoke Action</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>WhitespaceAction</actionName>
+        <actionType>apex</actionType>
+        <inputParameters>
+            <name>separator</name>
+            <value>
+                <stringValue>, </stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>65.0</apiVersion>
+    <label>Whitespace Regression</label>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+</Flow>

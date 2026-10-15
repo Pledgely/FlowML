@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Alert</name>
+        <label>Send Alert</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>Account.Custom_Alert</actionName>
+        <actionType>emailAlert</actionType>
+    </actionCalls>
+    <apiVersion>65.0</apiVersion>
+    <label>Action Name Regression</label>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+</Flow>

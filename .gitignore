@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Feedback notes
+feedback/
+
+# Local-only tests and fixtures
+packages/core/tests/private/
+
+# CLI test scratch dirs
+packages/core/tests/tmp-*/
+
+# Local scratch / sfdx cache
+.sfdx/
+tmp-verify/

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <label>Stages Regression</label>
+    <processType>Flow</processType>
+    <stages>
+        <description>First stage</description>
+        <name>Stage_One</name>
+        <isActive>true</isActive>
+        <label>Stage One</label>
+        <stageOrder>1</stageOrder>
+    </stages>
+    <status>Draft</status>
+</Flow>

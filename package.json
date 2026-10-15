@@ -1,0 +1,17 @@
+{
+  "name": "flowml-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/cli"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=packages/core && npm run build --workspace=packages/cli",
+    "test": "npm run test --workspace=packages/core",
+    "test:core": "npm run test --workspace=packages/core",
+    "precorpus-diff": "npm run build --workspace=packages/core",
+    "corpus-diff": "node scripts/corpus-diff.mjs",
+    "precorpus-selftest": "npm run build --workspace=packages/core",
+    "corpus-selftest": "node scripts/corpus-diff.selftest.mjs"
+  }
+}

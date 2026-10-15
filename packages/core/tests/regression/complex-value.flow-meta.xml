@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <label>Complex Value Regression</label>
+    <processType>Flow</processType>
+    <screens>
+        <name>Input_Screen</name>
+        <label>Input Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <fields>
+            <name>Data_Table</name>
+            <extensionName>flowruntime:datatable</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>keyField</name>
+                <value>
+                    <complexValue>Id</complexValue>
+                    <complexValueType>String</complexValueType>
+                </value>
+            </inputParameters>
+        </fields>
+    </screens>
+    <status>Draft</status>
+</Flow>

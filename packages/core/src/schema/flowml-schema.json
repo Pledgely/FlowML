@@ -1,0 +1,1211 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flowml.dev/schema.json",
+  "title": "FlowML",
+  "description": "FlowML YAML schema for Salesforce Flow transpilation",
+  "type": "object",
+  "required": ["flow", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "flow": {
+      "description": "Flow metadata and header properties",
+      "type": "object",
+      "required": ["name", "processType", "apiVersion", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+          "description": "Flow API name — letters, numbers, and underscores only; must start with a letter"
+        },
+        "label": { "type": "string" },
+        "processType": { "type": "string" },
+        "apiVersion": { "type": "string" },
+        "status": { "type": "string" },
+        "description": { "type": "string" },
+        "interviewLabel": { "type": "string" },
+        "runInMode": { "type": "string" },
+        "processMetadata": { "type": "object", "additionalProperties": { "type": "string" } },
+        "rawProcessMetadata": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "type": "string" },
+              "xmlTag": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "hasFullName": { "type": "boolean" },
+        "hasStatus": { "type": "boolean" },
+        "hasApiVersion": { "type": "boolean" },
+        "hasEnvironments": { "type": "boolean" },
+        "environments": { "type": "string" },
+        "isAdditionalPermissionRequiredToRun": { "type": "boolean" },
+        "extraProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "trigger": {
+      "description": "Record-triggered or scheduled flow trigger configuration",
+      "type": "object",
+      "required": ["type", "object"],
+      "properties": {
+        "type": { "type": "string" },
+        "object": { "type": "string" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" },
+        "recordTriggerType": { "type": "string" },
+        "requiresRecordChangedToMeetCriteria": { "type": "boolean" },
+        "entryConditions": { "$ref": "#/definitions/conditionList" },
+        "filterFormula": { "type": "string" },
+        "schedule": {
+          "type": "object",
+          "required": ["frequency", "startDate", "startTime"],
+          "properties": {
+            "frequency": { "type": "string" },
+            "startDate": { "type": "string" },
+            "startTime": { "type": "string" },
+            "dayOfMonthToRun": { "type": "string" },
+            "frequencyNumber": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        "next": { "type": "string" },
+        "scheduledPaths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "label": { "type": "string" },
+              "pathType": { "type": "string" },
+              "timeSource": { "type": "string" },
+              "timeField": { "type": "string" },
+              "offsetNumber": { "type": "number" },
+              "offsetUnit": { "type": "string" },
+              "maxBatchSize": { "type": "number" },
+              "next": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "start": {
+      "description": "Screen or autolaunched flow start configuration",
+      "type": "object",
+      "required": ["next"],
+      "properties": {
+        "next": { "type": "string" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "isActive": { "type": "boolean" },
+          "stageOrder": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "variables": {
+      "description": "Variable declarations keyed by variable name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dataType"],
+        "properties": {
+          "dataType": { "type": "string" },
+          "apexClass": { "type": "string" },
+          "objectType": { "type": "string" },
+          "isCollection": { "type": "boolean" },
+          "isInput": { "type": "boolean" },
+          "isOutput": { "type": "boolean" },
+          "defaultValue": {},
+          "defaultValueString": { "type": "string" },
+          "valueXmlTag": { "type": "string" },
+          "description": { "type": "string" },
+          "scale": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "formulas": {
+      "description": "Formula declarations keyed by formula name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dataType", "expression"],
+        "properties": {
+          "dataType": { "type": "string" },
+          "expression": { "type": "string" },
+          "scale": { "type": "number" },
+          "description": { "type": "string" },
+          "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "textTemplates": {
+      "description": "Text template declarations keyed by template name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "isViewedAsPlainText": { "type": "boolean" },
+          "text": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "constants": {
+      "description": "Constant declarations keyed by constant name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dataType", "value"],
+        "properties": {
+          "dataType": { "type": "string" },
+          "value": {},
+          "valueXmlTag": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "choiceSets": {
+      "description": "Dynamic choice set declarations keyed by choice set name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "description": "Which kind of choice set this is: dynamicPicklist (choices from a picklist field — set picklistObject + field) or recordChoice (choices from records or a record collection — object is required). Both serialize to <dynamicChoiceSets>. Closed set — a FlowML discriminator, not a Salesforce enum.",
+            "type": "string",
+            "enum": ["dynamicPicklist", "recordChoice"]
+          },
+          "object": { "type": "string" },
+          "picklistObject": { "type": "string" },
+          "collectionReference": { "type": "string" },
+          "outputAssignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["assignToReference", "field"],
+              "properties": {
+                "assignToReference": { "type": "string" },
+                "field": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "description": { "type": "string" },
+          "field": { "type": "string" },
+          "displayField": { "type": "string" },
+          "valueField": { "type": "string" },
+          "dataType": { "type": "string" },
+          "where": { "$ref": "#/definitions/conditionList" },
+          "sortField": { "type": "string" },
+          "sortOrder": { "type": "string" },
+          "limit": { "type": "number" },
+          "limitString": { "type": "string" },
+          "limitXmlTag": { "type": "string" },
+          "nilFields": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "choices": {
+      "description": "Static choice declarations keyed by choice name",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dataType", "label", "value"],
+        "properties": {
+          "dataType": { "type": "string" },
+          "label": { "type": "string" },
+          "value": {},
+          "valueXmlTag": { "type": "string" },
+          "valueString": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "customProperties": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "steps": {
+      "description": "Flow step definitions — each step is identified by its type key (lookup, decision, assignment, etc.)",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/definitions/lookupStep" },
+          { "$ref": "#/definitions/decisionStep" },
+          { "$ref": "#/definitions/assignmentStep" },
+          { "$ref": "#/definitions/recordCreateStep" },
+          { "$ref": "#/definitions/recordUpdateStep" },
+          { "$ref": "#/definitions/recordDeleteStep" },
+          { "$ref": "#/definitions/loopStep" },
+          { "$ref": "#/definitions/filterStep" },
+          { "$ref": "#/definitions/transformStep" },
+          { "$ref": "#/definitions/actionStep" },
+          { "$ref": "#/definitions/subflowStep" },
+          { "$ref": "#/definitions/screenStep" },
+          { "$ref": "#/definitions/customErrorStep" },
+          { "$ref": "#/definitions/waitStep" },
+          { "$ref": "#/definitions/recordLockStep" },
+          { "$ref": "#/definitions/recordRollbackStep" },
+          { "$ref": "#/definitions/rawStep" }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "processMetadataValues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value"],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "string" },
+          "xmlTag": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "conditionProcessMetadataValues": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/processMetadataValues" }
+    },
+    "conditionList": {
+      "description": "A list of conditions — array of condition strings (AND logic), object with logic+conditions (complex logic), or numbered object map (used in decision rules where conditionLogic is a sibling property)",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        {
+          "type": "object",
+          "required": ["logic", "conditions"],
+          "properties": {
+            "logic": { "type": "string" },
+            "conditions": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      ]
+    },
+    "sortOption": {
+      "type": "object",
+      "required": ["doesPutEmptyStringAndNullFirst", "sortField", "sortOrder"],
+      "properties": {
+        "doesPutEmptyStringAndNullFirst": { "type": "boolean" },
+        "sortField": { "type": "string" },
+        "sortOrder": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "screenFieldValidation": {
+      "type": "object",
+      "required": ["formula", "errorMessage"],
+      "properties": {
+        "formula": { "type": "string" },
+        "errorMessage": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "sectionColumn": {
+      "type": "object",
+      "required": ["width"],
+      "properties": {
+        "name": { "type": "string" },
+        "width": { "type": "number" },
+        "isRequired": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } },
+        "fields": { "type": "array", "items": { "$ref": "#/definitions/screenField" } }
+      },
+      "additionalProperties": false
+    },
+    "screenField": {
+      "oneOf": [
+        { "$ref": "#/definitions/inputField" },
+        { "$ref": "#/definitions/passwordField" },
+        { "$ref": "#/definitions/dropdownField" },
+        { "$ref": "#/definitions/multiselectField" },
+        { "$ref": "#/definitions/multiselectCheckboxesField" },
+        { "$ref": "#/definitions/radioField" },
+        { "$ref": "#/definitions/textareaField" },
+        { "$ref": "#/definitions/checkboxField" },
+        { "$ref": "#/definitions/toggleField" },
+        { "$ref": "#/definitions/displayField" },
+        { "$ref": "#/definitions/componentField" },
+        { "$ref": "#/definitions/repeaterField" },
+        { "$ref": "#/definitions/objectProvidedField" },
+        { "$ref": "#/definitions/sectionField" }
+      ]
+    },
+    "inputField": {
+      "description": "Text input field",
+      "type": "object",
+      "required": ["input"],
+      "properties": {
+        "input": { "type": "string" },
+        "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "passwordField": {
+      "description": "Password input field",
+      "type": "object",
+      "required": ["password"],
+      "properties": {
+        "password": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "dropdownField": {
+      "description": "Dropdown/picklist selector",
+      "type": "object",
+      "required": ["dropdown"],
+      "properties": {
+        "dropdown": { "type": "string" },
+        "choices": { "type": "array", "items": { "type": "string" } },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "multiselectField": {
+      "description": "Multi-select picklist",
+      "type": "object",
+      "required": ["multiselect"],
+      "properties": {
+        "multiselect": { "type": "string" },
+        "choices": { "type": "array", "items": { "type": "string" } },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "multiselectCheckboxesField": {
+      "description": "Multi-select checkbox group",
+      "type": "object",
+      "required": ["multiselectCheckboxes"],
+      "properties": {
+        "multiselectCheckboxes": { "type": "string" },
+        "choices": { "type": "array", "items": { "type": "string" } },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "radioField": {
+      "description": "Radio button group",
+      "type": "object",
+      "required": ["radio"],
+      "properties": {
+        "radio": { "type": "string" },
+        "choices": { "type": "array", "items": { "type": "string" } },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "textareaField": {
+      "description": "Large text area",
+      "type": "object",
+      "required": ["textarea"],
+      "properties": {
+        "textarea": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "checkboxField": {
+      "description": "Checkbox field",
+      "type": "object",
+      "required": ["checkbox"],
+      "properties": {
+        "checkbox": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "toggleField": {
+      "description": "Toggle switch",
+      "type": "object",
+      "required": ["toggle"],
+      "properties": {
+        "toggle": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "displayField": {
+      "description": "Display-only text content",
+      "type": "object",
+      "required": ["display", "value"],
+      "properties": {
+        "display": { "type": "string" },
+        "value": { "type": "string" },
+        "helpText": { "type": "string" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "componentField": {
+      "description": "Lightning web component instance",
+      "type": "object",
+      "required": ["component", "extensionName"],
+      "properties": {
+        "component": { "type": "string" },
+        "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" },
+        "extensionName": { "type": "string" },
+        "fieldType": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "objectType": { "type": "string" },
+        "choices": { "type": "array", "items": { "type": "string" } },
+        "dataTypeMappings": { "type": "array", "items": { "type": "object" } },
+        "required": { "type": "boolean" },
+        "inputs": { "type": "object" },
+        "inputXmlTags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputComplexValueTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputSetupReferenceTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputCollectionElementTypes": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "outputs": { "type": "object", "additionalProperties": { "type": "string" } },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "scale": { "type": "number" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "repeaterField": {
+      "description": "Repeating group of nested screen fields",
+      "type": "object",
+      "required": ["repeater", "fields"],
+      "properties": {
+        "repeater": { "type": "string" },
+        "fields": { "type": "array", "items": { "$ref": "#/definitions/screenField" } },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "objectProvidedField": {
+      "description": "Object-provided screen field",
+      "type": "object",
+      "required": ["objectProvided"],
+      "properties": {
+        "objectProvided": { "type": "string" },
+        "objectFieldReference": { "type": "string" },
+        "dataType": { "type": "string" },
+        "label": { "type": "string" },
+        "labelSource": { "type": "string" },
+        "required": { "type": "boolean" },
+        "defaultValue": {},
+        "defaultValueXmlTag": { "type": "string" },
+        "defaultValueString": { "type": "string" },
+        "isDisabled": { "type": "boolean" },
+        "isReadOnly": { "type": "boolean" },
+        "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+        "defaultSelectedChoiceReference": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "validation": { "$ref": "#/definitions/screenFieldValidation" },
+        "visibleWhen": { "$ref": "#/definitions/conditionList" },
+        "inputsOnNextNavToAssocScrn": { "type": "string" },
+        "helpText": { "type": "string" },
+        "scale": { "type": "number" },
+        "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "sectionField": {
+      "description": "Screen section with columns layout",
+      "type": "object",
+      "required": ["section"],
+      "properties": {
+        "section": {
+          "type": "object",
+          "required": ["name", "columns"],
+          "properties": {
+            "name": { "type": "string" },
+            "label": { "type": "string" },
+            "labelSource": { "type": "string" },
+            "isRequired": { "type": "boolean" },
+            "booleanValueWrappers": { "type": "array", "items": { "type": "string" } },
+            "visibleWhen": { "$ref": "#/definitions/conditionList" },
+            "styleProperties": { "type": "object", "additionalProperties": { "type": "string" } },
+            "columns": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/sectionColumn" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "lookupStep": {
+      "description": "Query records from a Salesforce object",
+      "type": "object",
+      "required": ["lookup", "object"],
+      "properties": {
+        "lookup": { "type": "string" },
+        "object": { "type": "string" },
+        "getFirst": { "type": "boolean" },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+            "description": "Flat field API name only — relationship paths like Contact.Email are not valid in queriedFields; use storeOutputAutomatically: true or a second lookup"
+          }
+        },
+        "outputs": { "type": "object", "additionalProperties": { "type": "string" } },
+        "outputReference": { "type": "string" },
+        "assignNullValuesIfNoRecordsFound": { "type": "boolean" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "where": { "$ref": "#/definitions/conditionList" },
+        "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" },
+        "sortField": { "type": "string" },
+        "sortOrder": { "type": "string" },
+        "limit": { "type": "number" },
+        "limitString": { "type": "string" },
+        "limitXmlTag": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "decisionStep": {
+      "description": "Branch flow execution based on conditions",
+      "type": "object",
+      "required": ["decision", "rules", "default"],
+      "properties": {
+        "decision": { "type": "string" },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "when"],
+            "properties": {
+              "name": { "type": "string" },
+              "label": { "type": "string" },
+              "conditionLogic": { "type": "string" },
+              "when": { "$ref": "#/definitions/conditionList" },
+              "next": { "type": "string" },
+              "isGoTo": { "type": "boolean" },
+              "doesRequireRecordChangedToMeetCriteria": { "type": "boolean" },
+              "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" },
+              "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "default": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" },
+            "next": { "type": "string" },
+            "isGoTo": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "assignmentStep": {
+      "description": "Set variable values with assignment operations",
+      "type": "object",
+      "required": ["assignment", "operations"],
+      "properties": {
+        "assignment": { "type": "string" },
+        "operations": { "type": "array", "items": { "type": "string" } },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recordCreateStep": {
+      "description": "Create a new Salesforce record",
+      "type": "object",
+      "required": ["recordCreate"],
+      "properties": {
+        "recordCreate": { "type": "string" },
+        "inputReference": { "type": "string" },
+        "object": { "type": "string" },
+        "fields": { "type": "object" },
+        "inputXmlTags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputComplexValueTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputSetupReferenceTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputProcessMetadataValues": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/processMetadataValues" }
+        },
+        "assignRecordIdToReference": { "type": "string" },
+        "doesUpsert": { "type": "boolean" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "upsertWhere": { "$ref": "#/definitions/conditionList" },
+        "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" },
+        "operationMultMatchingRecords": { "type": "string" },
+        "operationOneMatchingRecord": { "type": "string" },
+        "operationZeroMatchingRecords": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recordUpdateStep": {
+      "description": "Update existing Salesforce records",
+      "type": "object",
+      "required": ["recordUpdate"],
+      "properties": {
+        "recordUpdate": { "type": "string" },
+        "inputReference": { "type": "string" },
+        "object": { "type": "string" },
+        "fields": { "type": "object" },
+        "inputXmlTags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputComplexValueTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputSetupReferenceTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputProcessMetadataValues": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/processMetadataValues" }
+        },
+        "where": { "$ref": "#/definitions/conditionList" },
+        "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "processMetadataValues": { "$ref": "#/definitions/processMetadataValues" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recordDeleteStep": {
+      "description": "Delete Salesforce records",
+      "type": "object",
+      "required": ["recordDelete"],
+      "properties": {
+        "recordDelete": { "type": "string" },
+        "inputReference": { "type": "string" },
+        "object": { "type": "string" },
+        "where": { "$ref": "#/definitions/conditionList" },
+        "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "loopStep": {
+      "description": "Iterate over a collection of records or values",
+      "type": "object",
+      "required": ["loop", "collection"],
+      "properties": {
+        "loop": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "collection": { "type": "string" },
+        "iterationOrder": { "type": "string" },
+        "iterationNext": { "type": "string" },
+        "afterLastNext": { "type": "string" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "filterStep": {
+      "description": "Filter a collection based on conditions",
+      "type": "object",
+      "required": ["filter", "collection", "where"],
+      "properties": {
+        "filter": { "type": "string" },
+        "collection": { "type": "string" },
+        "itemVariable": { "type": "string" },
+        "elementSubtype": { "type": "string" },
+        "where": { "$ref": "#/definitions/conditionList" },
+        "conditionProcessMetadataValues": { "$ref": "#/definitions/conditionProcessMetadataValues" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "transformStep": {
+      "description": "Transform or aggregate collection data (map, sort, reduce)",
+      "type": "object",
+      "required": ["transform", "outputDataType", "transformType", "expression", "collection"],
+      "properties": {
+        "transform": { "type": "string" },
+        "outputDataType": { "type": "string" },
+        "isCollection": { "type": "boolean" },
+        "transformType": { "type": "string" },
+        "expression": { "type": "string" },
+        "collection": { "type": "string" },
+        "elementSubtype": { "type": "string" },
+        "sortOptions": { "type": "array", "items": { "$ref": "#/definitions/sortOption" } },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "scale": { "type": "number" },
+        "limit": { "type": "number" },
+        "limitString": { "type": "string" },
+        "limitXmlTag": { "type": "string" },
+        "sourceTag": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "actionStep": {
+      "description": "Invoke an action (Apex, email alert, quick action, etc.)",
+      "type": "object",
+      "required": ["action", "actionType"],
+      "properties": {
+        "action": { "type": "string" },
+        "actionType": { "type": "string" },
+        "actionName": { "type": "string" },
+        "nameSegment": { "type": "string" },
+        "dataTypeMappings": { "type": "array", "items": { "type": "object" } },
+        "offset": { "type": "number" },
+        "flowTransactionModel": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "versionString": { "type": "string" },
+        "inputs": { "type": "object" },
+        "inputXmlTags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputComplexValueTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputSetupReferenceTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputCollectionElementTypes": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "inputValueStrings": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputConfiguratorModes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "outputs": { "type": "object", "additionalProperties": { "type": "string" } },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "subflowStep": {
+      "description": "Call another flow as a subflow",
+      "type": "object",
+      "required": ["subflow", "flowName"],
+      "properties": {
+        "subflow": { "type": "string" },
+        "flowName": { "type": "string" },
+        "flowTransactionModel": { "type": "string" },
+        "storeOutputAutomatically": { "type": "boolean" },
+        "inputs": { "type": "object" },
+        "inputXmlTags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputComplexValueTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputSetupReferenceTypes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputCollectionElementTypes": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "outputs": { "type": "object", "additionalProperties": { "type": "string" } },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "screenStep": {
+      "description": "Display an interactive screen to the user",
+      "type": "object",
+      "required": ["screen", "fields"],
+      "properties": {
+        "screen": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "allowBack": { "type": "boolean" },
+        "allowFinish": { "type": "boolean" },
+        "allowPause": { "type": "boolean" },
+        "showFooter": { "type": "boolean" },
+        "showHeader": { "type": "boolean" },
+        "nextOrFinishButtonLabel": { "type": "string" },
+        "backButtonLabel": { "type": "string" },
+        "helpText": { "type": "string" },
+        "pausedText": { "type": "string" },
+        "stageReference": { "type": "string" },
+        "stageReferenceXmlTag": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "fields": { "type": "array", "items": { "$ref": "#/definitions/screenField" } },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "customErrorStep": {
+      "description": "Custom error message step for before-save validation",
+      "type": "object",
+      "required": ["customError"],
+      "properties": {
+        "customError": { "type": "string" },
+        "messages": { "type": "array", "items": { "type": "object" } },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "waitStep": {
+      "description": "Pause/resume flow execution",
+      "type": "object",
+      "required": ["wait"],
+      "properties": {
+        "wait": { "type": "string" },
+        "defaultNext": { "type": "string" },
+        "defaultLabel": { "type": "string" },
+        "events": { "type": "array", "items": { "type": "object" } },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recordLockStep": {
+      "description": "Lock or unlock records for approval processes",
+      "type": "object",
+      "required": ["recordLock"],
+      "properties": {
+        "recordLock": { "type": "string" },
+        "inputReference": { "type": "string" },
+        "lockOrUnlock": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recordRollbackStep": {
+      "description": "Roll back pending DML in screen flows",
+      "type": "object",
+      "required": ["recordRollback"],
+      "properties": {
+        "recordRollback": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "rawStep": {
+      "description": "Raw XML pass-through for unsupported element types",
+      "type": "object",
+      "required": ["raw", "elementType", "xml"],
+      "properties": {
+        "raw": { "type": "string" },
+        "elementType": { "type": "string" },
+        "next": { "type": "string" },
+        "isGoTo": { "type": "boolean" },
+        "faultNext": { "type": "string" },
+        "faultIsGoTo": { "type": "boolean" },
+        "_xmlOrder": { "type": "number" },
+        "locationX": { "type": "number" },
+        "locationY": { "type": "number" },
+        "xml": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

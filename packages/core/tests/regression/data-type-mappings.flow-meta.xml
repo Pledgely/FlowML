@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Invoke_Action</name>
+        <label>Invoke Action</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>GenericAction</actionName>
+        <actionType>apex</actionType>
+        <dataTypeMappings>
+            <typeName>T__records</typeName>
+            <typeValue>Account</typeValue>
+        </dataTypeMappings>
+    </actionCalls>
+    <apiVersion>65.0</apiVersion>
+    <label>Data Type Mapping Regression</label>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+</Flow>
